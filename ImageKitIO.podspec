@@ -17,7 +17,7 @@ ImageKit is a complete image optimization and transformation solution that comes
   s.swift_version    = '4.0'
   s.ios.deployment_target = '12.0'
 
-  s.source_files = 'ImageKit/**/*'
+  s.source_files = 'Sources/ImageKit/**/*'
 
   s.test_spec 'Tests' do |test_spec|
     test_spec.source_files = 'Tests/**/*'
