@@ -5,6 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "ImageKitIO",
+    platforms: [.iOS(.v13)],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
@@ -12,9 +13,9 @@ let package = Package(
             targets: ["ImageKitIO"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/Quick/Quick.git", .upToNextMajor(from: "5.0.1")),
-        .package(url: "https://github.com/Quick/Nimble.git", .upToNextMajor(from: "10.0.0")),
-        .package(url: "https://github.com/WeTransfer/Mocker.git", .upToNextMajor(from: "2.5"))
+        .package(url: "https://github.com/Quick/Quick.git", from: "5.0.1"),
+        .package(url: "https://github.com/Quick/Nimble.git", from: "10.0.0"),
+        .package(url: "https://github.com/WeTransfer/Mocker.git", from: "2.5.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -25,8 +26,8 @@ let package = Package(
        ),
         .testTarget(
             name: "ImageKitIO-Tests",
+            dependencies: ["ImageKitIO", "Quick", "Nimble", "Mocker"],
             path: "Tests"
-            dependencies: ["ImageKitIO", "Quick", "Nimble", "Mocker"]
         ),
     ]
 )
