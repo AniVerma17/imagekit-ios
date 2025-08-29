@@ -1,5 +1,5 @@
 {
-  "originHash" : "ef73901d10a04d4bbd01d4a3013217889c0912965af13ca3fc64b7dab7eb57ca",
+  "originHash" : "60afdccc3655ee729de5d4e7daa470f850930a652f5b2e7235ced4ef83f077f9",
   "pins" : [
     {
       "identity" : "cwlcatchexception",
@@ -44,6 +44,15 @@
       "state" : {
         "revision" : "f9d519828bb03dfc8125467d8f7b93131951124c",
         "version" : "5.0.1"
+      }
+    },
+    {
+      "identity" : "swifter",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/httpswift/swifter.git",
+      "state" : {
+        "revision" : "9483a5d459b45c3ffd059f7b55f9638e268632fd",
+        "version" : "1.5.0"
       }
     }
   ],

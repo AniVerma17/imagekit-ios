@@ -15,7 +15,8 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/Quick/Quick.git", from: "5.0.1"),
         .package(url: "https://github.com/Quick/Nimble.git", from: "10.0.0"),
-        .package(url: "https://github.com/WeTransfer/Mocker.git", from: "2.5.0")
+        .package(url: "https://github.com/WeTransfer/Mocker.git", from: "2.5.0"),
+        .package(url: "https://github.com/httpswift/swifter.git", from: "1.5.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -26,7 +27,7 @@ let package = Package(
        ),
         .testTarget(
             name: "ImageKitIO-Tests",
-            dependencies: ["ImageKitIO", "Quick", "Nimble", "Mocker"],
+            dependencies: ["ImageKitIO", "Quick", "Nimble", "Mocker", .product(name: "Swifter", package: "swifter")],
             path: "Tests"
         ),
     ]
