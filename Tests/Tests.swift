@@ -1,4 +1,6 @@
 import Quick
+import UIKit
+import Foundation
 import Nimble
 @testable import ImageKitIO
 import Swifter
@@ -6,7 +8,7 @@ import Swifter
 
 class URLGenerationSpec: QuickSpec {
     
-    override func spec() {
+    nonisolated override func spec() {
         
         beforeSuite {
             _ = ImageKit.init(publicKey: "Dummy public key", urlEndpoint: "https://ik.imagekit.io/demo", transformationPosition: TransformationPosition.PATH)
@@ -116,7 +118,7 @@ class URLGenerationSpec: QuickSpec {
     }
 }
 class UnitTestSpec: QuickSpec {
-    override func spec() {
+    nonisolated override func spec() {
         describe("Basic URL Generation") {
             it("Path") {
                 let actual = ImageKit.shared
@@ -481,7 +483,7 @@ class UnitTestSpec: QuickSpec {
             it("Background: UIColor.black") {
                 let actual = ImageKit.shared
                     .url(path: "medium_cafe_B1iTdD0C.jpg")
-                    .background(backgroundColor: UIColor.black)
+                    .background(backgroundColor: "000000")
                     .create()
                 expect(actual).to(equal(String(format: "https://ik.imagekit.io/demo/tr:bg-000000/medium_cafe_B1iTdD0C.jpg")))
             }
@@ -496,7 +498,7 @@ class UnitTestSpec: QuickSpec {
             it("Border: 5, UIColor.blue") {
                 let actual = ImageKit.shared
                     .url(path: "medium_cafe_B1iTdD0C.jpg")
-                    .border(borderWidth: 5, borderColor: UIColor.blue)
+                    .border(borderWidth: 5, borderColor: "0000FF")
                     .create()
                 expect(actual).to(equal(String(format: "https://ik.imagekit.io/demo/tr:b-5_0000FF/medium_cafe_B1iTdD0C.jpg")))
             }
@@ -640,14 +642,18 @@ class UnitTestSpec: QuickSpec {
         
         describe("Responsive URL loading for UIViews") {
             it("With default params") {
-                let view = UIView()
-                let dpr = String(format: "%.2f", Float(UIScreen.main.scale.rounded(.toNearestOrAwayFromZero)))
-                view.frame = CGRect(x: 0, y: 0, width: 400, height: 300)
-                let actual = try! ImageKit.shared
-                    .url(src: "https://ik.imagekit.io/demo/medium_cafe_B1iTdD0C.jpg")
-                    .setResponsive(view: view)
-                    .create()
-                expect(actual).to(equal(String(format: "https://ik.imagekit.io/demo/medium_cafe_B1iTdD0C.jpg?tr=w-400,h-300,dpr-\(dpr),cm-resize,fo-center")))
+                Task.detached(operation: {
+                    await MainActor.run(body: {
+                        let view = UIView()
+                        let dpr = String(format: "%.2f", Float(UIScreen.main.scale.rounded(.toNearestOrAwayFromZero)))
+                        view.frame = CGRect(x: 0, y: 0, width: 400, height: 300)
+                        let actual = try! ImageKit.shared
+                            .url(src: "https://ik.imagekit.io/demo/medium_cafe_B1iTdD0C.jpg")
+                            .setResponsive(view: view)
+                            .create()
+                        expect(actual).to(equal(String(format: "https://ik.imagekit.io/demo/medium_cafe_B1iTdD0C.jpg?tr=w-400,h-300,dpr-\(dpr),cm-resize,fo-center")))
+                    })
+                })
             }
         }
     }
@@ -844,7 +850,7 @@ class UploadSpec: QuickSpec {
             let sampleMetadata = ["device_name": "Emulator", "uid": 167434]
             it("Upload From Url") {
                 self.server?["/api/v2/files/upload"] = { request in
-                    var bodyParts = request.parseMultiPartFormData()
+                    let bodyParts = request.parseMultiPartFormData()
                     expect(String(bytes: bodyParts.first { $0.name == "file" }?.body ?? [], encoding: .utf8))
                         .to(equal("https://ik.imagekit.io/demo/default-image.jpg"))
                     expect(String(bytes: bodyParts.first { $0.name == "token" }?.body ?? [], encoding: .utf8))
@@ -887,8 +893,13 @@ class UploadSpec: QuickSpec {
                         "thumbnailUrl": "https://ik.imagekit.io/demo/tr:n-media_library_thumbnail/default-image-test_1JO5mllWR.jpg"
                     ]))
                 }
-                waitUntil(timeout: DispatchTimeInterval.seconds(60)){ done in
+                Task { @MainActor in
                     let urlConfiguration = URLSessionConfiguration.default
+                    let sampleExtensions = [
+                        ["name" : "remove-bg", "options" : ["add_shadow" : true]],
+                        ["name": "google-auto-tagging", "minConfidence": 80, "maxTags": 5]
+                    ]
+                    let sampleMetadata = ["device_name": "Emulator", "uid": 167434]
                     ImageKit.shared.uploader().upload(
                         file: "https://ik.imagekit.io/demo/default-image.jpg",
                         token: "test1",
@@ -919,16 +930,11 @@ class UploadSpec: QuickSpec {
                                     expect(uploadAPIResponse.width).to(equal(1000))
                                     expect(uploadAPIResponse.thumbnailUrl).to(equal("https://ik.imagekit.io/demo/tr:n-media_library_thumbnail/default-image-test_1JO5mllWR.jpg"))
                                 }
-                                break;
-                            case .failure( _ as UploadAPIError):
-                                fail("Should not throw Error")
-                                break;
-                            case .failure( _):
+                            case .failure(_):
                                 fail("Should not throw Error")
                                 break;
                             }
-                            done()
-                    })
+                        })
                 }
             }
             it("Upload UIImage") {
@@ -975,8 +981,13 @@ class UploadSpec: QuickSpec {
                     ]))
                 }
                 let image = getImageWithColor(color: .red, size: .init(width: 200, height: 200))
-                waitUntil(timeout: DispatchTimeInterval.seconds(60)){ done in
+                Task { @MainActor in
                     let urlConfiguration = URLSessionConfiguration.default
+                    let sampleExtensions = [
+                        ["name" : "remove-bg", "options" : ["add_shadow" : true]],
+                        ["name": "google-auto-tagging", "minConfidence": 80, "maxTags": 5]
+                    ]
+                    let sampleMetadata = ["device_name": "Emulator", "uid": 167434]
                     ImageKit.shared.uploader().upload(
                         file: image,
                         token: "test2",
@@ -1015,7 +1026,6 @@ class UploadSpec: QuickSpec {
                                 fail("Should not throw Error")
                                 break;
                             }
-                            done()
                     })
                 }
             }
@@ -1063,10 +1073,15 @@ class UploadSpec: QuickSpec {
                     ]))
                 }
                 let image = getImageWithColor(color: .red, size: .init(width: 200, height: 200))
-                waitUntil(timeout: DispatchTimeInterval.seconds(60)){ done in
+                Task { @MainActor in
                     let urlConfiguration = URLSessionConfiguration.default
+                    let sampleExtensions = [
+                        ["name" : "remove-bg", "options" : ["add_shadow" : true]],
+                        ["name": "google-auto-tagging", "minConfidence": 80, "maxTags": 5]
+                    ]
+                    let sampleMetadata = ["device_name": "Emulator", "uid": 167434]
                     ImageKit.shared.uploader().upload(
-                        file: UIImagePNGRepresentation(image)!,
+                        file: image.pngData()!,
                         token: "test3",
                         fileName: "default-image-test.jpg",
                         tags: ["test", "image",],
@@ -1103,8 +1118,7 @@ class UploadSpec: QuickSpec {
                                 fail("Should not throw Error")
                                 break;
                             }
-                            done()
-                    })
+                        })
                 }
             }
         }

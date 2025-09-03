@@ -8,12 +8,12 @@
 import Foundation
 import OSLog
 
-class UploadAPI: NSObject, URLSessionTaskDelegate {
-    internal static var baseUrl = "https://upload.imagekit.io"
+class UploadAPI: NSObject, URLSessionTaskDelegate, @unchecked Sendable {
+    nonisolated(unsafe) internal static var baseUrl = "https://upload.imagekit.io"
     internal static let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "ImageKitIO")
     
     internal static func upload(
-        file: Any,
+        file: Sendable,
         token: String,
         fileName: String,
         useUniqueFileName: Bool? = nil,
@@ -29,10 +29,10 @@ class UploadAPI: NSObject, URLSessionTaskDelegate {
         overwriteTags: Bool? = nil,
         overwriteCustomMetadata: Bool? = nil,
         customMetadata: [String : Any]? = nil,
-        progressClosure: ((Progress) -> Void)? = nil,
+        progressClosure: (@Sendable (Progress) -> Void)? = nil,
         urlConfiguration: URLSessionConfiguration = URLSessionConfiguration.default,
         uploadPolicy: UploadPolicy,
-        completion: @escaping (Result<(HTTPURLResponse?, UploadAPIResponse?), Error>) -> Void,
+        completion: @escaping @Sendable (Result<(HTTPURLResponse?, UploadAPIResponse?), Error>) -> Void,
         retryCount: Int = 0
     ) {
         var request = URLRequest(url: URL(string: "\(baseUrl)/api/v2/files/upload")!)
@@ -332,7 +332,7 @@ class UploadAPI: NSObject, URLSessionTaskDelegate {
     }
 }
 
-class UploadTaskDelegate: NSObject, URLSessionDataDelegate {
+class UploadTaskDelegate: NSObject, URLSessionDataDelegate, @unchecked Sendable {
 
     var uploadProgress: Progress
     var uploadProgressHandler: ((Progress) -> Void)?
