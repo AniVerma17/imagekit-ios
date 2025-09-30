@@ -28,7 +28,8 @@ let package = Package(
         .testTarget(
             name: "ImageKitIO-Tests",
             dependencies: ["ImageKitIO", "Quick", "Nimble", "Mocker", .product(name: "Swifter", package: "swifter")],
-            path: "Tests"
+            path: "Tests",
+            resources: [.process("fixtures")]
         ),
     ]
 )

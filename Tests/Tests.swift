@@ -754,7 +754,7 @@ class MimeDetectorSpec: QuickSpec {
             for ext in extensions {
                 context("when extension is \(ext)") {
                     it("shoud guess the correct mime type") {
-                        let data = loadFileData(path: "/Tests/fixtures/fixture.\(ext)")
+                        let data = self.loadFileData(path: "/fixture.\(ext)")
                         let mimeType = MimeDetector.mimeType(data: data)
                         
                         if let mime = mimeTypeByExtension[ext] {
@@ -790,7 +790,7 @@ class MimeDetectorSpec: QuickSpec {
         describe("MimeDetector.mimeType(bytes:).type") {
             context("when file type is image/jpeg") {
                 it("should return true") {
-                    let data: Data = loadFileData(path: "/Tests/fixtures/fixture.jpg")
+                    let data: Data = self.loadFileData(path: "/fixture.jpg")
                     let mimeType = MimeDetector.mimeType(data: data)
                     
                     expect(mimeType?.type) == .jpg
@@ -799,7 +799,7 @@ class MimeDetectorSpec: QuickSpec {
             
             context("when file type is application/pdf") {
                 it("should return true") {
-                    let data: Data = loadFileData(path: "/Tests/fixtures/fixture.pdf")
+                    let data: Data = self.loadFileData(path: "/fixture.pdf")
                     let mimeType = MimeDetector.mimeType(data: data)
                     
                     expect(mimeType?.type) == .pdf
@@ -808,7 +808,7 @@ class MimeDetectorSpec: QuickSpec {
             
             context("when file type is not image/jpeg") {
                 it("should return true") {
-                    let data: Data = loadFileData(path: "/Tests/fixtures/fixture.png")
+                    let data: Data = self.loadFileData(path: "/fixture.png")
                     let mimeType = MimeDetector.mimeType(data: data)
                     
                     expect(mimeType?.type) != .jpg
@@ -816,15 +816,15 @@ class MimeDetectorSpec: QuickSpec {
             }
         }
     }
-}
-
-func loadFileData(path: String) -> Data {
-    let projectDir = URL(fileURLWithPath: #file).pathComponents.prefix(while: { $0 != "Tests" }).joined(separator: "/").dropFirst()
-    print(projectDir)
-    let absolutePath = "\(projectDir)\(path)"
-    print(absolutePath)
-    let url = URL(fileURLWithPath: absolutePath, isDirectory: false)
-    return try! Data(contentsOf: url)
+    
+    func loadFileData(path: String) -> Data {
+        let projectDir = Bundle(for: MimeDetectorSpec.self).resourceURL?.appendingPathComponent("ImageKitIO_ImageKitIO-Tests.bundle").path ?? ""
+        print(projectDir)
+        let absolutePath = "\(projectDir)\(path)"
+        print(absolutePath)
+        let url = URL(fileURLWithPath: absolutePath, isDirectory: false)
+        return try! Data(contentsOf: url)
+    }
 }
 
 class UploadSpec: QuickSpec {

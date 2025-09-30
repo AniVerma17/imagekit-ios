@@ -21,6 +21,9 @@ ImageKit is a complete image optimization and transformation solution that comes
 
   s.test_spec 'Tests' do |test_spec|
     test_spec.source_files = 'Tests/**/*'
+    test_spec.resource_bundles = {
+      "ImageKitIO_ImageKitIO-Tests" => ["Tests/fixtures/**"]
+    }
     test_spec.dependency 'Quick', '~> 5.0.1'
     test_spec.dependency 'Nimble', '~> 10.0.0'
     test_spec.dependency 'Swifter', '~> 1.5.0'
