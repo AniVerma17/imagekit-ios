@@ -13,7 +13,34 @@ ImageKit iOS Pod allows you to use real-time [image resizing](https://docs.image
 ## Installation
 
 ### Requirements
-The library requires Swift 4.0 or above.
+The library requires Swift 6.0 or above.
+
+#### Swift Package Manager
+
+After completing the setup for the Swift package in yout project, you can add ImageKit to the _Package_ list for a particular app target in Xcode, or to the _dependencies_ value of your **Package.swift**:
+
+```swift
+let package = Package(
+    name: "Example",
+    ...
+    dependencies: [
+        ...
+        .package(url: "https://github.com/imagekit-developer/imagekit-ios.git", .upToNextMajor(from: "3.1.0"))
+    ],
+    ...
+    targets: [
+        ...
+        .target(
+            name: "Example",
+            ...
+            dependencies: [
+                "ImageKitIO",
+                ...
+            ],
+        ),
+    ]
+)
+```
 
 #### CocoaPods
 
