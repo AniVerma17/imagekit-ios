@@ -8,7 +8,7 @@ import Swifter
 
 class URLGenerationSpec: QuickSpec {
     
-    nonisolated override func spec() {
+    override func spec() {
         
         beforeSuite {
             _ = ImageKit.init(publicKey: "Dummy public key", urlEndpoint: "https://ik.imagekit.io/demo", transformationPosition: TransformationPosition.PATH)
@@ -118,7 +118,7 @@ class URLGenerationSpec: QuickSpec {
     }
 }
 class UnitTestSpec: QuickSpec {
-    nonisolated override func spec() {
+    override func spec() {
         describe("Basic URL Generation") {
             it("Path") {
                 let actual = ImageKit.shared

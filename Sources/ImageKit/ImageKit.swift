@@ -13,7 +13,7 @@ public struct UserDefaultKeys {
     public static let KEY_IMAGEKIT_TRANSFORMATION_POSITION = "IKTransformationPosition"
 }
 
-open class ImageKit: NSObject {
+open class ImageKit: NSObject, @unchecked Sendable {
 
     open fileprivate(set) var clientPublicKey: String! = ""
     open fileprivate(set) var imageKitEndpoint: String! = ""
@@ -23,7 +23,7 @@ open class ImageKit: NSObject {
     var configured = false
     lazy var userDefaults = UserDefaults.standard
 
-    nonisolated(unsafe) public static let shared = ImageKit()
+    public static let shared = ImageKit()
     
     @MainActor
     private lazy var sharedUploader = ImageKitUploader()
